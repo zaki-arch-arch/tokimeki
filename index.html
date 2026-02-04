@@ -6,7 +6,6 @@
     <title>トキメキ禁煙メモリアル v8.0 Ultra Compatible</title>
     <meta name="theme-color" content="#fff1f2">
     
-    <!-- エラーハンドリング -->
     <script>
         window.onerror = function(message, source, lineno, colno, error) {
             var loader = document.getElementById('app-loader');
@@ -21,7 +20,6 @@
         };
     </script>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -46,7 +44,6 @@
         }
     </script>
     
-    <!-- Libraries (UNPKG) -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
@@ -72,7 +69,6 @@
     </style>
 </head>
 <body>
-    <!-- ローディング画面 -->
     <div id="app-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#fff1f2; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;">
         <div style="font-size:24px; color:#e11d48; font-weight:bold; margin-bottom:10px;">Loading...</div>
         <div style="font-size:12px; color:#e11d48;">v8.0 Compatibility Mode</div>
@@ -80,12 +76,6 @@
 
     <div id="root" class="h-full"></div>
 
-    <!-- 
-        【修正のポイント】
-        - const/let を全て var に変更 (古いブラウザ/Babelパースエラー回避)
-        - 分割代入 (const [a, b] = ...) を廃止し、配列インデックスアクセスに変更
-        - アロー関数を廃止し、function() {} に変更
-    -->
     <script type="text/babel" data-presets="react">
         var useState = React.useState;
         var useEffect = React.useEffect;
@@ -383,4 +373,12 @@
                     goalName: f.get('goalName') || '自分へのご褒美',
                     goalCost: parseInt(f.get('goalCost')) || 10000
                 }));
-                set
+                setGameState('char_reg');
+            };
+
+            var registerHeroine = function() {
+                if (!previewImages.normal) return alert("通常画像は必須です！");
+                
+                var dateStr = new Date().toISOString();
+                var createdHeroine = { 
+                  
