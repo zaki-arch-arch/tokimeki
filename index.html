@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>トキメキ禁煙メモリアル v9.0 Final</title>
+    <title>トキメキ禁煙メモリアル v10.0 Native</title>
     <meta name="theme-color" content="#fff1f2">
     
-    <!-- エラーハンドリング (即時実行) -->
+    <!-- エラーハンドリング -->
     <script>
         window.onerror = function(message, source, lineno, colno, error) {
             var loader = document.getElementById('app-loader');
-            var errorBox = document.getElementById('error-box');
-            var errorMsg = document.getElementById('error-message');
-            
-            if (loader) loader.style.display = 'none';
-            if (errorBox && errorMsg) {
-                errorBox.style.display = 'flex';
-                errorMsg.innerHTML = '<strong>起動エラーが発生しました</strong><br><br>' + 
-                    '内容: ' + message + '<br>' +
-                    '場所: ' + lineno + '行目<br><br>' +
-                    '<small>※ブラウザのキャッシュを削除して再度お試しください。</small>';
+            if (loader) {
+                loader.innerHTML = '<div style="color:red; padding:20px; text-align:center;">' +
+                    '<h3>システムエラー</h3>' +
+                    '<p>' + message + '</p>' +
+                    '<button onclick="location.reload()" style="margin-top:10px; padding:10px; border:1px solid red; background:#fff;">リロード</button>' +
+                    '</div>';
             }
         };
     </script>
@@ -49,10 +45,9 @@
         }
     </script>
     
-    <!-- Libraries (バージョンの固定と軽量版の除外) -->
+    <!-- React & ReactDOM (Babelは削除しました) -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
     
     <style>
         html, body {
@@ -75,51 +70,27 @@
     </style>
 </head>
 <body>
-    <!-- ローディング画面 -->
+    <!-- ローディング -->
     <div id="app-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#fff1f2; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;">
         <div style="font-size:24px; color:#e11d48; font-weight:bold; margin-bottom:10px;">Loading...</div>
-        <div style="font-size:12px; color:#e11d48;">v9.0 System Booting</div>
-    </div>
-
-    <!-- エラー画面 -->
-    <div id="error-box" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:10000; justify-content:center; align-items:center; padding:30px; flex-direction:column;">
-        <div id="error-message" style="color:#e11d48; text-align:center; line-height:1.6; word-break:break-all;"></div>
-        <button onclick="localStorage.clear();location.reload();" style="margin-top:20px; padding:12px 24px; background-color:#e11d48; color:white; border:none; border-radius:8px; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
-            データをリセットして復旧
-        </button>
+        <div style="font-size:12px; color:#e11d48;">v10.0 Native Mode</div>
     </div>
 
     <div id="root" class="h-full"></div>
 
-    <!-- 
-        重要: data-presets="env,react" を指定して、最新のJS構文を確実に古いブラウザ向けに変換させます。
-        コード内では const, let, アロー関数を使用せず、var と function のみで記述します。
-    -->
-    <script type="text/babel" data-presets="env,react">
-        // 厳格モード
+    <!-- 純粋なJavaScriptとして実行 (type="text/babel"ではありません) -->
+    <script>
         'use strict';
 
-        // Reactの機能を古い変数に入れる
+        var h = React.createElement;
         var useState = React.useState;
         var useEffect = React.useEffect;
         var useMemo = React.useMemo;
+        var Fragment = React.Fragment;
 
-        // アイコンコンポーネント群 (すべて function で記述)
-        var Icons = {
-            Heart: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>; },
-            Alert: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>; },
-            Gift: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>; },
-            Image: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>; },
-            Trash: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>; },
-            Pulse: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>; },
-            Clock: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>; },
-            Wallet: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"></path></svg>; },
-            Pig: function(p) { return <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 5c-1.5 0-2.8.6-3.8 1.5l-2.5 2.5c-.3.3-.7.3-1 0l-2.6-2.6c-.3-.3-.3-.7 0-1L11.6 3c.6-.6 1.5-.6 2.1 0l.4.4"/><path d="M2 15c0 3.9 3.1 7 7 7 2.4 0 4.5-1.2 5.8-3l.5.5c.8.8 2.1.8 2.8 0l2.8-2.8c.8-.8.8-2.1 0-2.8l-.5-.5c1.8-1.3 3-3.4 3-5.8 0-2.2-1-4.2-2.6-5.6l-3.3 3.3c-.3.3-.7.3-1 0l-2.6-2.6c-.3-.3-.3-.7 0-1L16.4 2c-1.4-1.6-3.4-2.6-5.6-2.6-3.9 0-7 3.1-7 7v.5C2 7.8 2 8.9 2 10z"/><path d="M9 13v.01"/><path d="M15 9v.01"/></svg>; }
-        };
+        var APP_KEY = 'tokikin_v10_0';
 
-        var APP_KEY = 'tokikin_v9_0';
-
-        // シナリオデータ
+        // --- Data ---
         var SCENARIO_DB = {
             stage1: {
                 morning: ["おはよう！今日も一日、肺をキレイに保とうね！", "朝一番の深呼吸、気持ちいいでしょ？", "今日も禁煙記録、更新できそうかな？応援してるよ！"],
@@ -141,7 +112,6 @@
             }
         };
 
-        // 健康データ
         var HEALTH_BENEFITS = [
             { h: 0, t: "スタート！", d: "まずは深呼吸！体内の一酸化炭素排出が始まります。" },
             { h: 24, t: "リスク低下", d: "24時間達成！心臓への負担が減り始めています。" },
@@ -151,7 +121,6 @@
             { h: 8760, t: "健康体", d: "1年達成！心臓疾患のリスクが喫煙者の半分になりました！" }
         ];
 
-        // ギフトデータ
         var GIFTS = [
             { id: 1, name: 'スイーツ', cost: 500, love: 50, icon: '🍰' },
             { id: 2, name: '新作コスメ', cost: 3000, love: 350, icon: '💄' },
@@ -173,6 +142,36 @@
             { id: 3, type: '小吉', love: 30, msg: '地道な努力が実を結ぶ日。' }
         ];
 
+        // --- Icons (Native SVG) ---
+        function createIcon(dPath, isFill) {
+            return function(props) {
+                var p = Object.assign({ viewBox: "0 0 24 24", className: "w-6 h-6" }, props);
+                if (isFill) {
+                    p.fill = "currentColor";
+                    return h("svg", p, h("path", { d: dPath }));
+                } else {
+                    p.fill = "none";
+                    p.stroke = "currentColor";
+                    p.strokeWidth = "2";
+                    p.strokeLinecap = "round";
+                    p.strokeLinejoin = "round";
+                    return h("svg", p, dPath); // dPath is array of children or single child
+                }
+            };
+        }
+
+        var Icons = {
+            Heart: createIcon("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", true),
+            Alert: createIcon([h("circle", { cx: 12, cy: 12, r: 10 }), h("line", { x1: 12, y1: 8, x2: 12, y2: 12 }), h("line", { x1: 12, y1: 16, x2: 12.01, y2: 16 })], false),
+            Clock: createIcon([h("circle", { cx: 12, cy: 12, r: 10 }), h("polyline", { points: "12 6 12 12 16 14" })], false),
+            Wallet: createIcon([h("path", { d: "M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" }), h("path", { d: "M4 6v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z" })], false),
+            Pig: createIcon([h("path", { d: "M19 5c-1.5 0-2.8.6-3.8 1.5l-2.5 2.5c-.3.3-.7.3-1 0l-2.6-2.6c-.3-.3-.3-.7 0-1L11.6 3c.6-.6 1.5-.6 2.1 0l.4.4" }), h("path", { d: "M2 15c0 3.9 3.1 7 7 7 2.4 0 4.5-1.2 5.8-3l.5.5c.8.8 2.1.8 2.8 0l2.8-2.8c.8-.8.8-2.1 0-2.8l-.5-.5c1.8-1.3 3-3.4 3-5.8 0-2.2-1-4.2-2.6-5.6l-3.3 3.3c-.3.3-.7.3-1 0l-2.6-2.6c-.3-.3-.3-.7 0-1L16.4 2c-1.4-1.6-3.4-2.6-5.6-2.6-3.9 0-7 3.1-7 7v.5C2 7.8 2 8.9 2 10z" }), h("path", { d: "M9 13v.01" }), h("path", { d: "M15 9v.01" })], false),
+            Pulse: createIcon([h("polyline", { points: "22 12 18 12 15 21 9 3 6 12 2 12" })], false),
+            Gift: createIcon([h("polyline", { points: "20 12 20 22 4 22 4 12" }), h("rect", { x: 2, y: 7, width: 20, height: 5 }), h("line", { x1: 12, y1: 22, x2: 12, y2: 7 }), h("path", { d: "M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" }), h("path", { d: "M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" })], false),
+            Image: createIcon([h("rect", { x: 3, y: 3, width: 18, height: 18, rx: 2, ry: 2 }), h("circle", { cx: 8.5, cy: 8.5, r: 1.5 }), h("polyline", { points: "21 15 16 10 5 21" })], false),
+            Trash: createIcon([h("polyline", { points: "3 6 5 6 21 6" }), h("path", { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" })], false),
+        };
+
         // --- Utils ---
         var Storage = {
             get: function(key, def) {
@@ -187,7 +186,7 @@
                     return true;
                 } catch(e) {
                     if (e.name === 'QuotaExceededError') {
-                        alert("データ容量不足です。画像を減らして下さい。");
+                        alert("データ容量がいっぱいです。");
                     }
                     return false;
                 }
@@ -218,52 +217,51 @@
                             resolve(canvas.toDataURL('image/jpeg', 0.8));
                         } catch(err) { reject(err); }
                     };
-                    img.onerror = function() { reject(new Error("Img Err")); };
+                    img.onerror = function() { reject(new Error("Image Load Error")); };
                     img.src = e.target.result;
                 };
-                reader.onerror = function() { reject(new Error("File Err")); };
+                reader.onerror = function() { reject(new Error("File Read Error")); };
                 reader.readAsDataURL(file);
             });
         };
 
-        // --- Main App Component ---
+        // --- App Component ---
         function App() {
-            // State: 分割代入を使わない
-            var stGameState = useState('loading');
-            var gameState = stGameState[0], setGameState = stGameState[1];
+            var gameStateVal = useState('loading');
+            var gameState = gameStateVal[0], setGameState = gameStateVal[1];
 
-            var stProfile = useState(null);
-            var profile = stProfile[0], setProfile = stProfile[1];
+            var profileVal = useState(null);
+            var profile = profileVal[0], setProfile = profileVal[1];
 
-            var stHeroines = useState([]);
-            var heroines = stHeroines[0], setHeroines = stHeroines[1];
+            var heroinesVal = useState([]);
+            var heroines = heroinesVal[0], setHeroines = heroinesVal[1];
             
-            var stTimer = useState({ d:0, h:0, m:0, s:0, wallet:0, totalSaved:0, totalHours: 0 });
-            var timerData = stTimer[0], setTimerData = stTimer[1];
+            var timerVal = useState({ d:0, h:0, m:0, s:0, wallet:0, totalSaved:0, totalHours: 0 });
+            var timerData = timerVal[0], setTimerData = timerVal[1];
 
-            var stSos = useState(false);
-            var isSosMode = stSos[0], setIsSosMode = stSos[1];
+            var sosVal = useState(false);
+            var isSosMode = sosVal[0], setIsSosMode = sosVal[1];
 
-            var stSosMsg = useState("");
-            var sosMessage = stSosMsg[0], setSosMessage = stSosMsg[1];
+            var sosMsgVal = useState("");
+            var sosMessage = sosMsgVal[0], setSosMessage = sosMsgVal[1];
 
-            var stReset = useState(false);
-            var showResetConfirm = stReset[0], setShowResetConfirm = stReset[1];
+            var resetVal = useState(false);
+            var showResetConfirm = resetVal[0], setShowResetConfirm = resetVal[1];
 
-            var stBonus = useState(null);
-            var loginBonus = stBonus[0], setLoginBonus = stBonus[1];
+            var bonusVal = useState(null);
+            var loginBonus = bonusVal[0], setLoginBonus = bonusVal[1];
 
-            var stGift = useState(null);
-            var giftEvent = stGift[0], setGiftEvent = stGift[1];
+            var giftVal = useState(null);
+            var giftEvent = giftVal[0], setGiftEvent = giftVal[1];
 
-            var stTap = useState(false);
-            var tapAnim = stTap[0], setTapAnim = stTap[1];
+            var tapVal = useState(false);
+            var tapAnim = tapVal[0], setTapAnim = tapVal[1];
 
-            var stPrev = useState({ normal: null, happy: null, sad: null });
-            var previewImages = stPrev[0], setPreviewImages = stPrev[1];
+            var prevVal = useState({ normal: null, happy: null, sad: null });
+            var previewImages = prevVal[0], setPreviewImages = prevVal[1];
 
-            var stDial = useState("");
-            var dialogue = stDial[0], setDialogue = stDial[1];
+            var dialVal = useState("");
+            var dialogue = dialVal[0], setDialogue = dialVal[1];
 
             // Init
             useEffect(function() {
@@ -271,10 +269,10 @@
                 if (loader) loader.style.display = 'none';
 
                 var p = Storage.get('profile', null);
-                var h = Storage.get('heroines', []);
+                var hData = Storage.get('heroines', []);
                 if (p && p.startQuitDate) {
                     setProfile(p);
-                    setHeroines(h);
+                    setHeroines(hData);
                     setGameState('main');
                 } else {
                     setProfile({ 
@@ -383,4 +381,302 @@
                 setProfile(Object.assign({}, profile, { 
                     dailyTarget: parseInt(f.get('c')) || 20, 
                     pricePerPack: parseInt(f.get('p')) || 600,
-       
+                    goalName: f.get('goalName') || '自分へのご褒美',
+                    goalCost: parseInt(f.get('goalCost')) || 10000
+                }));
+                setGameState('char_reg');
+            };
+
+            var registerHeroine = function() {
+                if (!previewImages.normal) return alert("通常画像は必須です！");
+                
+                var dateStr = new Date().toISOString();
+                var createdHeroine = { 
+                    id: Date.now().toString(), 
+                    img: previewImages.normal, 
+                    imgHappy: previewImages.happy || previewImages.normal,
+                    imgSad: previewImages.sad || previewImages.normal,
+                    createdAt: dateStr 
+                };
+                
+                var nextHeroines = [createdHeroine].concat(heroines);
+                var nextProfile = Object.assign({}, profile);
+                if (!nextProfile.startQuitDate) {
+                    nextProfile.startQuitDate = dateStr;
+                }
+                nextProfile.currentHeroineId = createdHeroine.id;
+
+                if (Storage.set('heroines', nextHeroines) && Storage.set('profile', nextProfile)) {
+                    setHeroines(nextHeroines);
+                    setProfile(nextProfile);
+                    setGameState('main');
+                }
+            };
+
+            var giveGift = function(gift) {
+                if (timerData.wallet < gift.cost) return alert("あと ¥" + (gift.cost - timerData.wallet).toLocaleString() + " 足りません！");
+                
+                var nextLove = (profile.love||0) + gift.love;
+                var nextAccumulated = (profile.accumulatedMoney||0) - gift.cost;
+                var nextProfile = Object.assign({}, profile, { accumulatedMoney: nextAccumulated, love: nextLove });
+                
+                setProfile(nextProfile);
+                Storage.set('profile', nextProfile);
+                
+                setGiftEvent(gift);
+                setTimeout(function() { setGiftEvent(null); }, 3000);
+            };
+
+            var handleTap = function() {
+                if (tapAnim) return;
+                setTapAnim(true);
+                var nextLove = (profile.love || 0) + 1;
+                var nextProfile = Object.assign({}, profile, { love: nextLove });
+                setProfile(nextProfile);
+                Storage.set('profile', nextProfile);
+                setTimeout(function() { setTapAnim(false); }, 300);
+            };
+
+            var toggleSos = function() {
+                setIsSosMode(!isSosMode);
+            };
+
+            var resetData = function() {
+                if(confirm("データを消去しますか？")) {
+                    Storage.clear();
+                    location.reload();
+                }
+            };
+
+            var getHeroineImage = function() {
+                if (isSosMode) return heroImages.sad;
+                if (giftEvent || tapAnim) return heroImages.happy;
+                return heroImages.normal;
+            };
+
+            var getLevelInfo = function(love) {
+                var level = Math.floor(love / 100) + 1;
+                var nextExp = 100 - (love % 100);
+                var currentExp = love % 100;
+                return { level: level, nextExp: nextExp, currentExp: currentExp };
+            };
+
+            var getHealthBenefit = function(hours) {
+                for (var i = HEALTH_BENEFITS.length - 1; i >= 0; i--) {
+                    if (hours >= HEALTH_BENEFITS[i].h) return HEALTH_BENEFITS[i];
+                }
+                return HEALTH_BENEFITS[0];
+            };
+
+            // --- Render Logic (Native createElement) ---
+            if (gameState === 'loading') return null;
+
+            if (gameState === 'setup') {
+                return h("div", { className: "min-h-screen bg-rose-50 flex flex-col items-center justify-center p-6" },
+                    h("div", { className: "w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6" },
+                        h("div", { className: "text-center" },
+                            h("h1", { className: "text-2xl font-bold text-rose-600 mb-2" }, "トキメキ禁煙メモリアル"),
+                            h("p", { className: "text-sm text-gray-500" }, "初期設定")
+                        ),
+                        h("form", { onSubmit: finishSetupOne, className: "space-y-4" },
+                            h("div", null,
+                                h("label", { className: "block text-sm font-medium text-gray-700" }, "1日の本数"),
+                                h("input", { name: "c", type: "number", defaultValue: "20", required: true, className: "mt-1 w-full p-3 rounded-lg border border-gray-300" })
+                            ),
+                            h("div", null,
+                                h("label", { className: "block text-sm font-medium text-gray-700" }, "1箱の値段(円)"),
+                                h("input", { name: "p", type: "number", defaultValue: "600", required: true, className: "mt-1 w-full p-3 rounded-lg border border-gray-300" })
+                            ),
+                            h("div", null,
+                                h("label", { className: "block text-sm font-medium text-gray-700" }, "目標"),
+                                h("input", { name: "goalName", type: "text", placeholder: "旅行など", className: "mt-1 w-full p-3 rounded-lg border border-gray-300" })
+                            ),
+                            h("div", null,
+                                h("label", { className: "block text-sm font-medium text-gray-700" }, "目標金額(円)"),
+                                h("input", { name: "goalCost", type: "number", placeholder: "30000", className: "mt-1 w-full p-3 rounded-lg border border-gray-300" })
+                            ),
+                            h("button", { type: "submit", className: "w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-md" }, "次へ")
+                        )
+                    )
+                );
+            }
+
+            if (gameState === 'char_reg') {
+                return h("div", { className: "min-h-screen bg-rose-50 flex flex-col items-center p-6 overflow-y-auto" },
+                    h("div", { className: "w-full max-w-md bg-white rounded-2xl shadow-xl p-6 space-y-6 my-auto" },
+                        h("div", { className: "text-center" },
+                            h("h2", { className: "text-xl font-bold text-gray-800" }, "パートナー登録"),
+                            h("p", { className: "text-xs text-gray-500 mt-1" }, "画像を登録してください")
+                        ),
+                        [
+                            { k:'normal', l:'通常 (必須)' },
+                            { k:'happy', l:'喜び (任意)' },
+                            { k:'sad', l:'悲しみ (任意)' }
+                        ].map(function(mode) {
+                            return h("div", { key: mode.k, className: "flex items-center space-x-4" },
+                                h("div", { className: "relative w-20 h-20 bg-gray-100 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200" },
+                                    previewImages[mode.k] ? 
+                                        h("img", { src: previewImages[mode.k], className: "w-full h-full object-cover" }) :
+                                        h("div", { className: "w-full h-full flex items-center justify-center text-gray-300" }, h(Icons.Image, { className: "w-6 h-6" }))
+                                ),
+                                h("div", { className: "flex-1" },
+                                    h("label", { className: "block text-sm font-bold text-gray-700" }, mode.l),
+                                    h("input", { type: "file", accept: "image/*", onChange: function(e){ handleImageSelect(e, mode.k); }, className: "block w-full text-xs text-gray-500 mt-1" })
+                                )
+                            );
+                        }),
+                        h("div", { className: "pt-4" },
+                            h("button", { onClick: registerHeroine, className: "w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg" }, "始める！")
+                        )
+                    )
+                );
+            }
+
+            var lvlInfo = getLevelInfo(profile.love);
+            var currentBenefit = getHealthBenefit(timerData.totalHours);
+            var goalPercent = Math.min(100, Math.floor((timerData.wallet / profile.goalCost) * 100));
+
+            return h("div", { className: "relative h-full overflow-hidden flex flex-col transition-colors duration-700 " + (isSosMode ? 'bg-slate-900' : 'bg-rose-50') },
+                isSosMode && h("div", { className: "absolute inset-0 z-0 pointer-events-none" },
+                    h("div", { className: "absolute inset-0 bg-red-900/20 animate-pulse" })
+                ),
+                h("div", { className: "flex-1 overflow-y-auto pb-24 hide-scrollbar relative z-10" },
+                    // Header
+                    h("div", { className: "px-4 pt-4 flex justify-between items-center mb-4" },
+                        h("div", { className: "bg-white/90 backdrop-blur text-rose-500 px-4 py-1.5 rounded-full shadow-sm flex items-center space-x-1 font-bold text-sm border border-rose-100" },
+                            h(Icons.Heart, { className: "w-4 h-4" }),
+                            h("span", null, "Lv." + lvlInfo.level)
+                        ),
+                        h("button", { onClick: function(){ setShowResetConfirm(true); }, className: "bg-white/90 backdrop-blur text-gray-500 px-3 py-1.5 rounded-full shadow-sm flex items-center space-x-1 text-xs border border-gray-100 hover:bg-gray-50" },
+                            h(Icons.Trash, { className: "w-3 h-3" }),
+                            h("span", null, "削除")
+                        )
+                    ),
+                    // Heroine & Bubble
+                    h("div", { className: "flex flex-col items-center mb-8 px-4" },
+                        h("div", { 
+                            className: "relative w-48 h-48 md:w-64 md:h-64 rounded-full border-[6px] border-white shadow-xl overflow-hidden cursor-pointer transition-transform active:scale-95 " + (tapAnim ? 'scale-95' : ''),
+                            onClick: handleTap
+                        },
+                            (tapAnim && !isSosMode) && h("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none z-20" },
+                                h(Icons.Heart, { className: "w-20 h-20 text-rose-500 animate-ping opacity-75" })
+                            ),
+                            getHeroineImage() ? 
+                                h("img", { src: getHeroineImage(), className: "w-full h-full object-cover transition duration-500 " + (isSosMode ? 'grayscale-[50%] brightness-75' : '') }) :
+                                h("div", { className: "w-full h-full flex items-center justify-center bg-gray-200 text-gray-400" }, "No Image")
+                        ),
+                        h("div", { className: "mt-4 relative px-6 py-4 rounded-2xl shadow-sm max-w-sm text-center w-full animate-float " + (isSosMode ? 'bg-red-900/80 text-white border border-red-500' : 'bg-white text-slate-700 font-medium') },
+                            h("div", { className: "absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[8px] " + (isSosMode ? 'border-b-red-900/80' : 'border-b-white') }),
+                            h("p", { className: "text-sm leading-relaxed" }, isSosMode ? sosMessage : dialogue)
+                        )
+                    ),
+                    // Stats Grid
+                    h("div", { className: "px-4 grid grid-cols-2 gap-3 mb-3" },
+                        h("div", { className: "bg-white rounded-2xl p-4 shadow-sm flex flex-col justify-center items-center h-32" },
+                            h("div", { className: "text-xs text-gray-400 mb-1 flex items-center" }, h(Icons.Clock, { className: "w-3 h-3 mr-1" }), "禁煙時間"),
+                            h("div", { className: "text-slate-800 font-bold text-lg leading-tight" }, timerData.d, h("span", { className: "text-sm font-normal" }, "日"), " ", timerData.h, h("span", { className: "text-sm font-normal" }, "時間")),
+                            h("div", { className: "text-slate-800 font-bold text-lg leading-tight mt-1" }, timerData.m, h("span", { className: "text-sm font-normal" }, "分"), " ", h("span", { className: "text-rose-500" }, timerData.s), h("span", { className: "text-sm font-normal text-rose-500" }, "秒"))
+                        ),
+                        h("div", { className: "bg-white rounded-2xl p-3 shadow-sm flex flex-col h-32 relative overflow-hidden" },
+                            h("div", { className: "text-xs text-gray-400 mb-1 flex items-center" }, h(Icons.Wallet, { className: "w-3 h-3 mr-1" }), "推し活残高"),
+                            h("div", { className: "flex-1 flex flex-col justify-center" },
+                                h("div", { className: "flex items-baseline space-x-1" }, h("span", { className: "text-rose-500 font-bold text-2xl" }, "¥" + timerData.wallet.toLocaleString())),
+                                h("div", { className: "text-[10px] text-gray-400 mt-1 flex items-center" }, h(Icons.Pig, { className: "w-3 h-3 mr-1 text-gray-400" }), "累計: ¥" + timerData.totalSaved.toLocaleString())
+                            ),
+                            h("div", { className: "w-full mt-auto" },
+                                h("div", { className: "flex justify-between text-[10px] text-gray-400 mb-0.5" },
+                                    h("span", { className: "truncate max-w-[70px]" }, profile.goalName),
+                                    h("span", null, goalPercent + "%")
+                                ),
+                                h("div", { className: "w-full bg-gray-100 rounded-full h-1.5" },
+                                    h("div", { className: "bg-yellow-400 h-1.5 rounded-full transition-all duration-1000", style: { width: goalPercent + '%' } })
+                                )
+                            )
+                        )
+                    ),
+                    // Health
+                    h("div", { className: "px-4 mb-6" },
+                        h("div", { className: "bg-emerald-50 rounded-2xl p-4 flex items-start space-x-3 border border-emerald-100 shadow-sm" },
+                            h("div", { className: "bg-emerald-100 p-2 rounded-full text-emerald-600 mt-1" }, h(Icons.Pulse, { className: "w-5 h-5" })),
+                            h("div", null,
+                                h("div", { className: "font-bold text-emerald-800 text-sm" }, currentBenefit.t),
+                                h("div", { className: "text-xs text-emerald-700 leading-relaxed mt-0.5" }, currentBenefit.d)
+                            )
+                        )
+                    ),
+                    // SOS
+                    h("div", { className: "px-4 mb-8" },
+                        h("button", { onClick: toggleSos, className: "w-full py-4 rounded-full font-bold shadow-lg transition transform active:scale-95 flex items-center justify-center space-x-2 " + (isSosMode ? 'bg-gray-600 text-white hover:bg-gray-700' : 'bg-slate-800 text-white hover:bg-slate-900') },
+                            isSosMode ? h("span", null, "平常モードに戻る") : [h(Icons.Alert, { className: "w-5 h-5 text-rose-400" }), h("span", null, "吸いたくなったら押して！")]
+                        )
+                    ),
+                    // Gifts
+                    h("div", { className: "px-4 mb-20" },
+                        h("h3", { className: "text-sm font-bold text-gray-600 mb-3 flex items-center" }, h(Icons.Gift, { className: "w-4 h-4 mr-1 text-rose-400" }), "思い出をプレゼント"),
+                        h("div", { className: "flex space-x-3 overflow-x-auto pb-4 hide-scrollbar" },
+                            GIFTS.map(function(g) {
+                                var canBuy = timerData.wallet >= g.cost;
+                                return h("button", { 
+                                    key: g.id, 
+                                    onClick: function() { if(canBuy) giveGift(g); }, 
+                                    disabled: isSosMode,
+                                    className: "flex-shrink-0 w-32 bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border transition-all active:scale-95 " + (canBuy ? 'border-rose-100 hover:border-rose-200' : 'border-gray-100 opacity-60 grayscale')
+                                },
+                                    h("div", { className: "text-3xl mb-2" }, g.icon),
+                                    h("div", { className: "text-xs font-bold text-gray-800 mb-1" }, g.name),
+                                    h("div", { className: "text-xs font-bold rounded-full px-2 py-0.5 " + (canBuy ? 'bg-rose-50 text-rose-500' : 'bg-gray-100 text-gray-400') }, "¥" + g.cost.toLocaleString())
+                                );
+                            })
+                        )
+                    )
+                ),
+                // Footer
+                h("div", { className: "absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur border-t border-rose-100 p-3 z-30 pb-safe" },
+                    h("div", { className: "flex justify-between items-end mb-1 px-1" },
+                        h("div", { className: "text-xs font-bold text-gray-400" }, "LOVE POINT (Lv." + lvlInfo.level + ")"),
+                        h("div", { className: "text-xs font-bold text-rose-400" }, lvlInfo.currentExp + " / Next " + (lvlInfo.nextExp + lvlInfo.currentExp))
+                    ),
+                    h("div", { className: "w-full bg-gray-100 rounded-full h-2" },
+                        h("div", { className: "bg-rose-500 h-2 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]", style: { width: (lvlInfo.currentExp / (lvlInfo.nextExp + lvlInfo.currentExp)) * 100 + '%' } })
+                    )
+                ),
+                // Overlays
+                giftEvent && h("div", { className: "fixed inset-0 z-50 flex items-center justify-center pointer-events-none" },
+                    h("div", { className: "absolute inset-0 bg-white/30 backdrop-blur-[2px]" }),
+                    h("div", { className: "relative text-center animate-heartbeat z-10 p-8 bg-white/90 rounded-3xl shadow-2xl border-4 border-rose-200" },
+                        h("div", { className: "text-8xl mb-4" }, giftEvent.icon),
+                        h("div", { className: "text-2xl font-bold text-rose-500 mb-1" }, "Love +" + giftEvent.love),
+                        h("div", { className: "text-gray-500 text-sm" }, "好感度アップ！")
+                    )
+                ),
+                loginBonus && h("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm", onClick: function(){ setLoginBonus(null); } },
+                    h("div", { className: "bg-white rounded-3xl p-8 text-center max-w-xs w-full animate-pop shadow-2xl relative overflow-hidden" },
+                        h("div", { className: "absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-rose-400 to-rose-500" }),
+                        h("div", { className: "text-sm font-bold text-gray-400 mb-2" }, "LOGIN BONUS"),
+                        h("div", { className: "text-6xl my-4" }, "⛩️"),
+                        h("div", { className: "text-3xl font-bold text-rose-600 mb-1" }, loginBonus.type),
+                        h("p", { className: "text-sm text-gray-500 mb-6" }, loginBonus.msg),
+                        h("div", { className: "inline-block bg-rose-50 text-rose-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm border border-rose-100" }, "Love +" + loginBonus.love)
+                    )
+                ),
+                showResetConfirm && h("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-6" },
+                    h("div", { className: "bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-pop" },
+                        h("h3", { className: "text-lg font-bold text-gray-800 mb-4 text-center" }, "データを削除しますか？"),
+                        h("div", { className: "space-y-3" },
+                            h("button", { onClick: resetData, className: "w-full font-bold py-3 text-white bg-rose-500 rounded-xl shadow-lg hover:bg-rose-600" }, "はい、削除します"),
+                            h("button", { onClick: function(){ setShowResetConfirm(false); }, className: "w-full py-3 text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200" }, "キャンセル")
+                        )
+                    )
+                )
+            );
+        }
+
+        // Start
+        window.onload = function() {
+            var container = document.getElementById('root');
+            var root = ReactDOM.createRoot(container);
+            root.render(h(App));
+        };
+    </script>
+</body>
+</html>
